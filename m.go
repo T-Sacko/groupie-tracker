@@ -37,10 +37,13 @@ type U struct {
 	Relations    string   `json:"relations"`
 }
 
+func person(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println(r.Body)
+}
+
 func groupie(w http.ResponseWriter, r *http.Request) {
 	tmpl, _ := template.ParseFiles("index.html")
-	tmpl.Execute(w, struct{ Take T }{Take})
-
+	tmpl.Execute(w, Take)
 }
 
 func main() {
@@ -52,13 +55,12 @@ func main() {
 	file, _ := ioutil.ReadAll(response.Body)
 	_ = json.Unmarshal(file, &Take)
 	fmt.Println(GetData()[0].Image)
+	http.HandleFunc("/person", person)
 	http.HandleFunc("/", groupie)
 	http.ListenAndServe(":5505", nil)
-
 }
 
 func GetData() []U {
-
 	// make sure to manage the error and return and Http.Status(Internalservererror)
 	for _, v := range Take {
 		Data = append(Data, U{

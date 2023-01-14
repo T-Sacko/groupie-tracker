@@ -21,20 +21,14 @@ type T []struct {
 }
 
 var (
-	Take T
-	Data []U
+	Take      T
+	Locations loc
 )
 
-type U struct {
-	Id           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	CreationDate int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
+type loc []struct {
+	Id        int    `json:"id"`
+	Dates     int    `json:"dates"`
+	Locations string `json:"locations"`
 }
 
 func main() {
@@ -53,26 +47,49 @@ func main() {
 }
 
 func groupie(w http.ResponseWriter, r *http.Request) {
-	tmpl, _ := template.ParseFiles("index.html")
-	tmpl.Execute(w, struct{ Take T }{Take})
+	var tmpl *template.Template
+	if r.URL.Path == "/" {
+		tmpl, _ = template.ParseFiles("index.html")
+		tmpl.Execute(w, struct{ Take T }{Take})
 
-}
-
-func GetData() []U {
-
-	// make sure to manage the error and return and Http.Status(Internalservererror)
-	for _, v := range Take {
-		Data = append(Data, U{
-			Id:           v.Id,
-			Image:        v.Image,
-			Name:         v.Name,
-			Members:      v.Members,
-			CreationDate: v.CreationDate,
-			FirstAlbum:   v.FirstAlbum,
-			Locations:    v.Locations,
-			ConcertDates: v.ConcertDates,
-			Relations:    v.Relations,
-		})
+	} else {
+		fmt.Println("gogo")
+		tmp, _ := template.ParseFiles("id.html")
+		tmp.Execute(w, nil)
+		// locs, err := http.Get("https://groupietrackers.herokuapp.com/api/locations")
+		// if err != nil {
+		// 	print(err)
+		// }
+		// defer locs.Body.Close()
+		// file, _ := ioutil.ReadAll(locs.Body)
+		// _ = json.Unmarshal(file, &Locations)
+		// dates, errr := http.Get("https://groupietrackers.herokuapp.com/api/dates")
+		// if errr != nil {
+		// 	print(err)
+		// }
+		// defer locs.Body.Close()
+		// filedates, _ := ioutil.ReadAll(dates.Body)
+		// _ = json.Unmarshal(filedates, &Locations)
+		// fmt.Println(Locations)
 	}
-	return (Data)
+
 }
+
+// func GetData() []U {
+
+// 	// make sure to manage the error and return and Http.Status(Internalservererror)
+// 	for _, v := range Take {
+// 		Data = append(Data, U{
+// 			Id:           v.Id,
+// 			Image:        v.Image,
+// 			Name:         v.Name,
+// 			Members:      v.Members,
+// 			CreationDate: v.CreationDate,
+// 			FirstAlbum:   v.FirstAlbum,
+// 			Locations:    v.Locations,
+// 			ConcertDates: v.ConcertDates,
+// 			Relations:    v.Relations,
+// 		})
+// 	}
+// 	return (Data)
+// }

@@ -8,11 +8,6 @@ import (
 	"net/http"
 )
 
-var (
-	Take T
-	Data []U
-)
-
 type T []struct {
 	Id           int      `json:"id"`
 	Image        string   `json:"image"`
@@ -24,6 +19,11 @@ type T []struct {
 	ConcertDates string   `json:"concertDates"`
 	Relations    string   `json:"relations"`
 }
+
+var (
+	Take T
+	Data []U
+)
 
 type U struct {
 	Id           int      `json:"id"`
@@ -37,30 +37,29 @@ type U struct {
 	Relations    string   `json:"relations"`
 }
 
-func person(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println(r.Body)
-}
-
-func groupie(w http.ResponseWriter, r *http.Request) {
-	tmpl, _ := template.ParseFiles("index.html")
-	tmpl.Execute(w, Take)
-}
-
 func main() {
 	response, err := http.Get("http://groupietrackers.herokuapp.com/api/artists")
+
 	if err != nil {
 		print(err)
 	}
 	defer response.Body.Close()
 	file, _ := ioutil.ReadAll(response.Body)
 	_ = json.Unmarshal(file, &Take)
-	fmt.Println(GetData()[0].Image)
-	http.HandleFunc("/person", person)
+	fmt.Println(Take[0].Image)
 	http.HandleFunc("/", groupie)
 	http.ListenAndServe(":5505", nil)
+
+}
+
+func groupie(w http.ResponseWriter, r *http.Request) {
+	tmpl, _ := template.ParseFiles("index.html")
+	tmpl.Execute(w, struct{ Take T }{Take})
+
 }
 
 func GetData() []U {
+
 	// make sure to manage the error and return and Http.Status(Internalservererror)
 	for _, v := range Take {
 		Data = append(Data, U{

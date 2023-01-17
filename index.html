@@ -5,9 +5,15 @@
         #ting{
             width:25%
         }
+        .card-group {
+            display: flex;
+        }
+        .card {
+            flex: 1;
+        }
         .container {
-  padding: 2px 16px;
-}
+          padding: 2px 16px;
+        }
     </style>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,20 +21,15 @@
     <title>Document</title>
 </head>
 <body>
-    {{range .Take}}
-    <div class="card" id="ting">
-        
-      
-
-           
-            <a href="{{.Id}}"><img src="{{.Image}}" style="width: 300px;"></a>
+    <div id="card-group">
+        {{range .Take}}
+        <div class="card" >
+            <a href="http://groupietrackers.herokuapp.com/api/artists/{{.Id}}"><img src="{{.Image}}" style="width: 300px;"></a>
             <div class="container">
-                <p>Name:{{.Name}}</p>
-                <p>{{.Members}}</p>
+                <a href="http://groupietrackers.herokuapp.com/api/artists/{{.Id}}"> <p><p>Name:{{.Name}}</p></p></a> 
             </div>
-            
-       
         </div>
         {{end}}
+    </div>
 </body>
 </html>

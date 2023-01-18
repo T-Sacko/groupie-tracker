@@ -48,7 +48,7 @@ func groupie(w http.ResponseWriter, r *http.Request) {
 	var tmpl *template.Template
 	if r.URL.Path == "/" {
 		tmpl, _ = template.ParseFiles("index.html")
-		tmpl.Execute(w, struct{ Take T }{Take})
+		tmpl.Execute(w, Take)
 
 	} else {
 		fmt.Fprint(w, "<html><body>404 error</body></html>")

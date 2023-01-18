@@ -46,11 +46,18 @@ func main() {
 
 func groupie(w http.ResponseWriter, r *http.Request) {
 	var tmpl *template.Template
+	var err error
 	if r.URL.Path == "/" {
-		tmpl, _ = template.ParseFiles("index.html")
-		tmpl.Execute(w, Take)
+		tmpl, err = template.ParseFiles("index.html")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("500 Internal Server Error"))
+		} else {
+			tmpl.Execute(w, Take)
+		}
 
 	} else {
+		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "<html><body>404 error</body></html>")
 	}
 	// fmt.Println("gogo")

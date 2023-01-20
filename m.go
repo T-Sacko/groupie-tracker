@@ -19,16 +19,22 @@ type T []struct {
 	Relations    string   `json:"relations"`
 }
 
-var (
-	Take      T
-	Locations loc
-)
+type ting struct {
+	Id        int                 `json:"id"`
+	Dateslocs map[string][]string `json:"datesLocations"`
+}
 
 type loc struct {
 	Id        int      `json:"id"`
 	Locations []string `json:"locations"`
 	Dates     string   `json:"dates"`
 }
+
+var (
+	Relations ting
+	Take      T
+	Locations loc
+)
 
 func main() {
 	response, err := http.Get("http://groupietrackers.herokuapp.com/api/artists")

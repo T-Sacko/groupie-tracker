@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -37,9 +36,8 @@ func main() {
 		print(err)
 	}
 	defer response.Body.Close()
-	file, _ := ioutil.ReadAll(response.Body)
-	_ = json.Unmarshal(file, &Take)
-	fmt.Println(Take[2].Name)
+	json.NewDecoder(response.Body).Decode(&Take)
+	fmt.Println(Take[0].Name)
 	http.HandleFunc("/", groupie)
 	http.ListenAndServe(":5505", nil)
 }
@@ -47,6 +45,22 @@ func main() {
 func groupie(w http.ResponseWriter, r *http.Request) {
 	var tmpl *template.Template
 	var err error
+
+	// nn := len(r.URL.Path) - 1
+	// n := r.URL.Path[nn:]
+	// // sn, _ := strconv.Atoi(n)
+
+	// if r.URL.Path == "/"+n {
+	// 	tmpl, err = template.ParseFiles("id.html")
+
+	// 	if err != nil {
+	// 		w.WriteHeader(http.StatusInternalServerError)
+	// 		w.Write([]byte("500 Internal Server Error"))
+	// 	} else {
+	// 		err = tmpl.Execute(w,Dates, Locations, Take)
+	// 	}
+	// }
+
 	if r.URL.Path == "/" {
 		tmpl, err = template.ParseFiles("index.html")
 		if err != nil {

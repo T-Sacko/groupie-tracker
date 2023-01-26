@@ -7,19 +7,6 @@ import (
 	"net/http"
 )
 
-type Page struct {
-	ArtistInfos []Info
-}
-
-type Info struct {
-	Name         string
-	Image        string
-	Members      []string `json:"members"`
-	CreationDate int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	DatesLocs    map[string][]string
-}
-
 type Artist struct {
 	Id           int      `json:"id"`
 	Image        string   `json:"image"`
@@ -44,8 +31,8 @@ type loc struct {
 }
 
 var (
-	Relations []ting
-	Take      []Artist
+	Relations ting
+	Take      T
 	Locations loc
 )
 
@@ -56,23 +43,16 @@ func main() {
 	}
 	defer response.Body.Close()
 	json.NewDecoder(response.Body).Decode(&Take)
+	var rels []ting
 	for i := 1; i <= 52; i++ {
 		var next ting
 		url := fmt.Sprintf("http://groupietrackers.herokuapp.com/api/relation/%d", i)
 		res, _ := http.Get(url)
 		defer res.Body.Close()
 		json.NewDecoder(res.Body).Decode(&next)
-		Relations = append(Relations, next)
-
+		rels = append(rels, next)
 	}
-	var page Page
-	var infos []Info
-	for i := 0; i <= 51; i++ {
-		var nextInfo Info = Info{Name: Take[i].Name, Image: Take[i].Image, DatesLocs: Relations[i].Dateslocs}
-		infos = append(infos, nextInfo)
-	}
-	page = Page{ArtistInfos: infos}
-	fmt.Println(Relations[5])
+	fmt.Println(rels[5])
 
 	respons, er := http.Get("http://groupietrackers.herokuapp.com/api/relation/1")
 	if er != nil {
@@ -81,7 +61,6 @@ func main() {
 	defer respons.Body.Close()
 	json.NewDecoder(respons.Body).Decode(&Relations)
 	fmt.Println(Relations)
-
 	http.HandleFunc("/", groupie)
 	http.ListenAndServe(":5505", nil)
 }

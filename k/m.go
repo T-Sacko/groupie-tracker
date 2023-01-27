@@ -2,34 +2,40 @@ package main
 
 // import (
 // 	"fmt"
-// 	"net/http"
-// 	"text/template"
+
+// 	"github.com/01-edu/z01"
 // )
 
-// type Person struct {
-// 	Name string
-// 	Age  int
-// }
-
 // func main() {
-// 	// people := []Person{
-// 	// 	{Name: "Alice", Age: 25},
-// 	// 	{Name: "Bob", Age: 30},
-// 	// 	{Name: "Charlie", Age: 35},
-// 	// }
-
-// 	fmt.Println(struct{ People []Person }{people})
-// 	tmpl, err := template.ParseFiles("template.html")
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-// 		err := tmpl.Execute(w, struct{ People []Person }{people})
-// 		if err != nil {
-// 			panic(err)
-// 		}
-// 	})
-
-// 	http.ListenAndServe(":8000", nil)
+// 	Chunk([]int{22, 33, 44, 5, 6}, 2)
+// 	z01.PrintRune('4' + 48)
 // }
+// func Chunk(slice []int, size int) {
+// 	var temp [][]int
+
+// 	for i := 0; i < len(slice); i += size {
+
+// 		end := i + size
+// 		if end > len(slice) {
+// 			end = len(slice)
+// 		}
+// 		temp = append(temp, slice[i:end])
+// 	}
+// 	fmt.Println(temp)
+// }
+
+// // func chunk(slice []int, size int) {
+// // 	if size == 0 {
+// // 		fmt.Println()
+// // 		return
+// // 	}
+// // 	var chunks [][]int
+// // 	for i := 0; i < len(slice); i += size {
+// // 		end := i + size
+// // 		if end > len(slice) {
+// // 			end = len(slice)
+// // 		}
+// // 		chunks = append(chunks, slice[i:end])
+// // 	}
+// // 	fmt.Println(chunks)
+// // }

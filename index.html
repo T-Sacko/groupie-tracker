@@ -32,12 +32,10 @@ height: 470px;
    
         {{range .}}
         <div class="card" >
-            <a href="http://groupietrackers.herokuapp.com/api/artists/{{.Id}}"><img src="{{.Image}}" style="width: 250px; height: 250px;"> </a>
+            <a href="{{.Id}}"><img src="{{.Image}}" style="width: 250px; height: 250px;"> </a>
             
-                <a href="http://groupietrackers.herokuapp.com/api/artists/{{.Id}}"> <p><p>{{.Name}}</p></p></a> 
-                <a href="{{.Locations}}"> <p>Locations</p></a>
-                <a href="{{.Relations}}" ><p>relations</p></a>
-                <a href="https://groupietrackers.herokuapp.com/api/dates/{{.Id}}"     ><p>dates</p></a>
+              <p>{{.Name}}</p>
+             
                 
               
             

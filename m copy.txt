@@ -38,17 +38,18 @@ type ting struct {
 	Dateslocs map[string][]string `json:"datesLocations"`
 }
 
-type loc struct {
+type Loc struct {
 	Id        int      `json:"id"`
 	Locations []string `json:"locations"`
 	Dates     string   `json:"dates"`
 }
 
 var (
+	Ting      Page
 	Infos     []Info
 	Relations []ting
 	Take      []Artist
-	Locations loc
+	Locations Loc
 )
 
 func main() {
@@ -70,7 +71,6 @@ func main() {
 		Relations = append(Relations, next)
 
 	}
-	// var page Page
 
 	for i := 0; i <= 51; i++ {
 		var nextInfo Info = Info{
@@ -82,7 +82,7 @@ func main() {
 			FirstAlbum:   Take[i].FirstAlbum}
 		Infos = append(Infos, nextInfo)
 	}
-	// page = Page{ArtistInfos: infos}
+	Ting = Page{ArtistInfos: Infos}
 	fmt.Println(Relations[5])
 
 	respons, er := http.Get("http://groupietrackers.herokuapp.com/api/relation/1")
@@ -100,23 +100,7 @@ func groupie(w http.ResponseWriter, r *http.Request) {
 	var tmpl *template.Template
 	var err error
 
-	if len(r.URL.Path) > 1 && len(r.URL.Path) <= 3 {
-		n := r.URL.Path[1:]
-		sn, err := strconv.Atoi(n)
-		if err != nil || sn > 52 || sn < 1 {
-			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprint(w, "<html><body>404 error</body></html>")
-		} else if sn <= 52 && sn >= 1 {
-			tmp, err := template.ParseFiles("id.html")
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("500 Internal Server Error"))
-
-			} else {
-				tmp.Execute(w, Infos[sn-1])
-			}
-		}
-	} else if r.URL.Path == "/" {
+	if r.URL.Path == "/" {
 		tmpl, err = template.ParseFiles("index.html")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -124,16 +108,30 @@ func groupie(w http.ResponseWriter, r *http.Request) {
 		} else {
 			tmpl.Execute(w, Take)
 		}
+	} else if len(r.URL.Path) > 1 && len(r.URL.Path) <= 3 {
+		n := r.URL.Path[1:]
+		sn, _ := strconv.Atoi(n)
+		fmt.Println(Infos[sn-1])
+		if sn <= 52 && sn >= 0 {
+			tmp, err := template.ParseFiles("id.html")
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("500 Internal Server Error"))
+
+			} else {
+				tmp.Execute(w, Ting.ArtistInfos[sn-1])
+			}
+		}
 
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "<html><body>404 error</body></html>")
 	}
 	// fmt.Println("gogo")
-	// nn := len(r.URL.Path) - 1
-	// n := r.URL.Path[nn:]
-	// sn, _ := strconv.Atoi(n)
-	// tmp, _ := template.ParseFiles("id.html")
-	// tmp.Execute(w, Infos[sn])
+	nn := len(r.URL.Path) - 1
+	n := r.URL.Path[nn:]
+	sn, _ := strconv.Atoi(n)
+	tmp, _ := template.ParseFiles("id.html")
+	tmp.Execute(w, Infos[sn])
 
 }

@@ -8,10 +8,6 @@ import (
 	"strconv"
 )
 
-type Page struct {
-	ArtistInfos []Info
-}
-
 type Info struct {
 	Name         string
 	Image        string
@@ -21,7 +17,7 @@ type Info struct {
 	FirstAlbum   string
 }
 
-type Artist struct {
+type Artist []struct {
 	Id           int      `json:"id"`
 	Image        string   `json:"image"`
 	Name         string   `json:"name"`
@@ -47,7 +43,7 @@ type loc struct {
 var (
 	Infos     []Info
 	Relations []ting
-	Take      []Artist
+	Take      Artist
 	Locations loc
 )
 
@@ -58,6 +54,7 @@ func main() {
 	}
 	defer response.Body.Close()
 	json.NewDecoder(response.Body).Decode(&Take)
+
 	for i := 1; i <= 52; i++ {
 		var next ting
 		url := fmt.Sprintf("http://groupietrackers.herokuapp.com/api/relation/%d", i)
@@ -69,28 +66,19 @@ func main() {
 		json.NewDecoder(res.Body).Decode(&next)
 		Relations = append(Relations, next)
 
-	}
-	// var page Page
-
-	for i := 0; i <= 51; i++ {
 		var nextInfo Info = Info{
-			Name:         Take[i].Name,
-			Image:        Take[i].Image,
-			DatesLocs:    Relations[i].Dateslocs,
-			Members:      Take[i].Members,
-			CreationDate: Take[i].CreationDate,
-			FirstAlbum:   Take[i].FirstAlbum}
+			Name:         Take[i-1].Name,
+			Image:        Take[i-1].Image,
+			DatesLocs:    Relations[i-1].Dateslocs,
+			Members:      Take[i-1].Members,
+			CreationDate: Take[i-1].CreationDate,
+			FirstAlbum:   Take[i-1].FirstAlbum,
+		}
 		Infos = append(Infos, nextInfo)
-	}
-	// page = Page{ArtistInfos: infos}
-	fmt.Println(Relations[5])
 
-	respons, er := http.Get("http://groupietrackers.herokuapp.com/api/relation/1")
-	if er != nil {
-		print(er)
 	}
-	defer respons.Body.Close()
-	json.NewDecoder(respons.Body).Decode(&Relations)
+
+	fmt.Println(len(Relations))
 
 	http.HandleFunc("/", groupie)
 	http.ListenAndServe(":5505", nil)
@@ -129,11 +117,4 @@ func groupie(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "<html><body>404 error</body></html>")
 	}
-	// fmt.Println("gogo")
-	// nn := len(r.URL.Path) - 1
-	// n := r.URL.Path[nn:]
-	// sn, _ := strconv.Atoi(n)
-	// tmp, _ := template.ParseFiles("id.html")
-	// tmp.Execute(w, Infos[sn])
-
 }
